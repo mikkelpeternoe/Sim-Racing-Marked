@@ -10,7 +10,7 @@ export default function Navbar() {
   return (
     <nav className="bg-red-700 text-white px-6 py-4 flex justify-between items-center">
       <Link className="font-bold text-lg" href="/">
-        RaceSim Marked
+        SimRace Market
       </Link>
 
       <div className="space-x-4 flex items-center">

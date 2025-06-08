@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RaceSim Market",
+  title: "SimRace Market",
   description: "Danmarks største markedsplads for brugt sim racing udstyr",
 }
 
