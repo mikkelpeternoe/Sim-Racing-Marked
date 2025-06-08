@@ -1,61 +1,41 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
+import { useEffect } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useUser } from '@/lib/useUser'
 
-export default function OpretAnnonce() {
-  const [image, setImage] = useState<File | null>(null);
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState('');
+export default function LoginPage() {
+  const router = useRouter()
+  const params = useSearchParams()
+  const user = useUser()
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (!image) return alert('Vælg et billede');
+  const redirect = params.get('redirect') || '/'
 
-    const formData = new FormData();
-    formData.append('image', image);
-    formData.append('title', title);
-    formData.append('price', price);
+  useEffect(() => {
+    if (user) {
+      router.push(redirect)
+    }
+  }, [user, redirect, router])
 
-    const res = await fetch('/api/post', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (res.ok) alert('Annonce oprettet!');
-    else alert('Noget gik galt');
-  };
+  const loginWithFacebook = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'facebook',
+    })
+    if (error) console.error('Login failed:', error.message)
+  }
 
   return (
-    <main className="max-w-xl mx-auto mt-10 px-4">
-      <h1 className="text-2xl font-semibold mb-6">Opret ny annonce</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Titel"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Pris"
-          value={price}
-          onChange={e => setPrice(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => setImage(e.target.files?.[0] || null)}
-          className="w-full"
-        />
+    <div className="min-h-screen flex items-center justify-center bg-neutral-900 text-white">
+      <div className="p-8 bg-neutral-800 rounded shadow max-w-sm w-full">
+        <h1 className="text-2xl font-bold mb-4">Login</h1>
         <button
-          type="submit"
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          onClick={loginWithFacebook}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
         >
-          Opret annonce
+          Log ind med Facebook
         </button>
-      </form>
-    </main>
-  );
+      </div>
+    </div>
+  )
 }
